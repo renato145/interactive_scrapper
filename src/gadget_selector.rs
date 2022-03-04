@@ -16,18 +16,13 @@ pub async fn get_user_selection(
         .get_mut(0)
     {
         Some(gadget) => {
-            match gadget
-                .prop("value")
-                .await?
-                .map(|s| {
-                    if s == "No valid path found." {
-                        None
-                    } else {
-                        Some(s)
-                    }
-                })
-                .flatten()
-            {
+            match gadget.prop("value").await?.and_then(|s| {
+                if s == "No valid path found." {
+                    None
+                } else {
+                    Some(s)
+                }
+            }) {
                 Some(selection) => Ok(UserSelection::Selection(selection)),
                 None => Ok(UserSelection::Empty),
             }
